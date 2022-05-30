@@ -8,6 +8,7 @@ from .pages.basket_page import BasketPage
 # from .locators import ProductPageLocators
 
 
+@pytest.mark.need_review
 @pytest.mark.parametrize('link',
                          ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
                           "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
@@ -31,6 +32,7 @@ def test_guest_can_add_product_to_basket_right_product(browser, link):
 
 
 # А можно и так спарамертизировать, то же самое, но гораздо компактнее
+@pytest.mark.need_review
 @pytest.mark.parametrize('promo_offer', ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
 def test_guest_can_add_product_to_basket_right_price(browser, promo_offer):
     # page = ProductPage(browser, PRODUCT_PAGE_URL)
@@ -64,6 +66,7 @@ def test_message_disappeared_after_adding_product_to_basket(browser):
     assert page.is_disappeared_success_message(), 'The success message is not disappeared but it OK'
 
 
+@pytest.mark.need_review
 def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     page = ProductPage(browser, PRODUCT_PAGE_URL)
     page.open()
@@ -72,6 +75,7 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     assert basket_page.basket_is_empty(), 'Basket is no empty'
 
 
+@pytest.mark.need_review
 def test_guest_can_see_in_basket_opened_from_product_page_text_about_empty(browser):
     page = ProductPage(browser, PRODUCT_PAGE_URL)
     page.open()
@@ -88,6 +92,7 @@ class TestLoginFromMainPage:
         page.open()
         assert page.should_be_login_link(), "Login link is not presented on the ProductPage"
 
+    @pytest.mark.need_review
     def test_guest_can_go_to_login_page_from_product_page(self, browser):
         page = ProductPage(browser, PRODUCT_PAGE_URL)
         page.open()
@@ -109,6 +114,7 @@ class TestUserAddToBasketFromProductPage:
         page.register_new_user(email, password)
         page.should_be_authorized_user()
 
+    @pytest.mark.need_review
     def test_user_can_add_product_to_basket_right_product(self, browser):
         page = ProductPage(browser, PRODUCT_PAGE_URL)
         page.open()
@@ -116,6 +122,7 @@ class TestUserAddToBasketFromProductPage:
         assert page.product == page.expected_product, f"The product  '{page.expected_product}' in the basket" \
                                                       f" not equal the chosen '{page.product}'"
 
+    @pytest.mark.need_review
     def test_user_can_add_product_to_basket_right_price(self, browser):
         page = ProductPage(browser, PRODUCT_PAGE_URL)
         page.open()
