@@ -68,3 +68,9 @@ class BasePage:
     def go_to_basket_page(self):
         btn_go_to_basket_page = self.browser.find_element(*BasePageLocators.BTN_GO_TO_BASKET_PAGE)
         btn_go_to_basket_page.click()
+
+    def should_be_authorized_user(self):
+        try:
+            self.is_element_present(*BasePageLocators.USER_ICON)
+        except NoSuchElementException:
+            raise NoSuchElementException('"User icon is not presented, probably unauthorised user"')

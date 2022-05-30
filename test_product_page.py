@@ -1,5 +1,8 @@
 import pytest
+import time
+import faker       # makes fake data for tests
 from .pages.product_page import ProductPage
+from .pages.login_page import LoginPage
 from .constants import PRODUCT_PAGE_URL, LOGIN_PAGE_URL
 from .pages.basket_page import BasketPage
 # from .locators import ProductPageLocators
@@ -61,22 +64,6 @@ def test_message_disappeared_after_adding_product_to_basket(browser):
     assert page.is_disappeared_success_message(), 'The success message is not disappeared but it OK'
 
 
-def test_guest_should_see_login_link_on_product_page(browser):
-    page = ProductPage(browser, PRODUCT_PAGE_URL)
-    page.open()
-    assert page.should_be_login_link(), "Login link is not presented on the ProductPage"
-
-
-def test_guest_can_go_to_login_page_from_product_page(browser):
-    page = ProductPage(browser, PRODUCT_PAGE_URL)
-    page.open()
-    page.go_to_login_page()
-    tested_url = browser.current_url.split(sep='/')
-    tested_url.pop(3)  # deleting language from url
-    tested_url = '/'.join(tested_url)
-    assert tested_url == LOGIN_PAGE_URL, f"Link to login page on the main page is broken:  {tested_url} != {LOGIN_PAGE_URL}"
-
-
 def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     page = ProductPage(browser, PRODUCT_PAGE_URL)
     page.open()
@@ -92,3 +79,51 @@ def test_guest_can_see_in_basket_opened_from_product_page_text_about_empty(brows
     basket_page = BasketPage(browser, browser.current_url)
     assert basket_page.guest_can_see_in_basket_opened_from_main_page_text_about_empty(), 'Guest can not see inscription ' \
                                                                                          'that bask is empty'
+
+
+@pytest.mark.login_guest
+class TestLoginFromMainPage:
+    def test_guest_should_see_login_link_on_product_page(self, browser):
+        page = ProductPage(browser, PRODUCT_PAGE_URL)
+        page.open()
+        assert page.should_be_login_link(), "Login link is not presented on the ProductPage"
+
+    def test_guest_can_go_to_login_page_from_product_page(self, browser):
+        page = ProductPage(browser, PRODUCT_PAGE_URL)
+        page.open()
+        page.go_to_login_page()
+        tested_url = browser.current_url.split(sep='/')
+        tested_url.pop(3)                                # deleting language from url
+        tested_url = '/'.join(tested_url)
+        assert tested_url == LOGIN_PAGE_URL, f"Link to login page on the main page is broken:  {tested_url} != {LOGIN_PAGE_URL}"
+
+
+class TestUserAddToBasketFromProductPage:
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        page = LoginPage(browser, LOGIN_PAGE_URL)
+        page.open()
+        f = faker.Faker()
+        email = f.email()
+        password = f.password()
+        page.register_new_user(email, password)
+        page.should_be_authorized_user()
+
+    def test_user_can_add_product_to_basket_right_product(self, browser):
+        page = ProductPage(browser, PRODUCT_PAGE_URL)
+        page.open()
+        page.add_product_to_basket()
+        assert page.product == page.expected_product, f"The product  '{page.expected_product}' in the basket" \
+                                                      f" not equal the chosen '{page.product}'"
+
+    def test_user_can_add_product_to_basket_right_price(self, browser):
+        page = ProductPage(browser, PRODUCT_PAGE_URL)
+        page.open()
+        page.add_product_to_basket()
+        assert page.price == page.expected_price, f"The price  '{page.expected_price}' in the basket" \
+                                                  f" not equal the chosen '{page.price}'"
+
+    def test_user_cant_see_success_message(self, browser):
+        page = ProductPage(browser, PRODUCT_PAGE_URL)
+        page.open()
+        assert page.is_not_success_message_present(), 'Success message is presented but should not be'
