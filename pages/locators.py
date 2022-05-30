@@ -3,10 +3,12 @@ from selenium.webdriver.common.by import By
 
 class BasePageLocators:
     LOGIN_LINK = (By.CSS_SELECTOR, "#login_link")
+    BTN_GO_TO_BASKET_PAGE = (By.CSS_SELECTOR, "span a.btn.btn-default")
 
 
 class MainPageLocators:
     LOGIN_LINK = (By.CSS_SELECTOR, '#login_link')
+    BTN_ADD_TO_BASKET = (By.CSS_SELECTOR, '.product_pod button')
 
 
 class LoginPageLocators:
@@ -21,3 +23,9 @@ class ProductPageLocators:
     EXPECTED_PRODUCT = (By.CSS_SELECTOR, '.alertinner strong')
     EXPECTED_PRICE = (By.CSS_SELECTOR, '.alertinner p strong')
     SUCCESS_MASSAGE = (By.CSS_SELECTOR, ".alert-success")
+
+
+class BasketPageLocators:
+    TEXT_BASKET_IS_NO_EMPTY = (By.CLASS_NAME, 'total')
+    TEXT_BASKET_IS_EMPTY = (By.CSS_SELECTOR, '#content_inner p')
+

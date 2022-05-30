@@ -64,3 +64,7 @@ class BasePage:
             login_link.click()
         except NoSuchElementException:
             raise NoSuchElementException(f'Login link is absent on the page: {self.__class__.__name__}')
+
+    def go_to_basket_page(self):
+        btn_go_to_basket_page = self.browser.find_element(*BasePageLocators.BTN_GO_TO_BASKET_PAGE)
+        btn_go_to_basket_page.click()

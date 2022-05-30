@@ -1,7 +1,7 @@
-import time
 import pytest
 from .pages.product_page import ProductPage
 from .constants import PRODUCT_PAGE_URL, LOGIN_PAGE_URL
+from .pages.basket_page import BasketPage
 # from .locators import ProductPageLocators
 
 
@@ -28,9 +28,7 @@ def test_guest_can_add_product_to_basket_right_product(browser, link):
 
 
 # А можно и так спарамертизировать, то же самое, но гораздо компактнее
-@pytest.mark.parametrize('promo_offer', ["0", "1", "2", "3", "4", "5", "6",
-                                         pytest.param("7", marks=pytest.mark.xfail(reason="We will not fix it!!!")),
-                                         "8", "9"])
+@pytest.mark.parametrize('promo_offer', ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
 def test_guest_can_add_product_to_basket_right_price(browser, promo_offer):
     # page = ProductPage(browser, PRODUCT_PAGE_URL)
     page = ProductPage(browser,
@@ -77,3 +75,20 @@ def test_guest_can_go_to_login_page_from_product_page(browser):
     tested_url.pop(3)  # deleting language from url
     tested_url = '/'.join(tested_url)
     assert tested_url == LOGIN_PAGE_URL, f"Link to login page on the main page is broken:  {tested_url} != {LOGIN_PAGE_URL}"
+
+
+def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
+    page = ProductPage(browser, PRODUCT_PAGE_URL)
+    page.open()
+    page.go_to_basket_page()
+    basket_page = BasketPage(browser, browser.current_url)
+    assert basket_page.basket_is_empty(), 'Basket is no empty'
+
+
+def test_guest_can_see_in_basket_opened_from_product_page_text_about_empty(browser):
+    page = ProductPage(browser, PRODUCT_PAGE_URL)
+    page.open()
+    page.go_to_basket_page()
+    basket_page = BasketPage(browser, browser.current_url)
+    assert basket_page.guest_can_see_in_basket_opened_from_main_page_text_about_empty(), 'Guest can not see inscription ' \
+                                                                                         'that bask is empty'
